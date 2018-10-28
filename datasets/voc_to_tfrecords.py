@@ -1,18 +1,11 @@
-import os
-import xml.etree.ElementTree as ET
-import numpy as np
-import tensorflow as tf
-import os
 import random
 import sys
+import xml.etree.ElementTree as ET
+from datasets.voc07_config import VOC_CLASSES
+from datasets.voc07_config import rootDir
+import tensorflow as tf
+import os
 
-VOC_CLASSES = (  # always index 0
-    'aeroplane', 'bicycle', 'bird', 'boat',
-    'bottle', 'bus', 'car', 'cat', 'chair',
-    'cow', 'diningtable', 'dog', 'horse',
-    'motorbike', 'person', 'pottedplant',
-    'sheep', 'sofa', 'train', 'tvmonitor')
-rootDir = 'E:/ImageFolder/VOCdevkit/VOC2007'
 # 图片和标签存放的文件夹.
 DIRECTORY_ANNOTATIONS = 'Annotations'
 DIRECTORY_IMAGES = 'JPEGImages'

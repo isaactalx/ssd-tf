@@ -120,7 +120,7 @@ def multibox_layer(inputs,
     cls_pred = tf.reshape(cls_pred,
                           tensor_shape(cls_pred, 4)[:-1] + [num_anchors, num_classes])
     # loc_pred格式为[h*w*num_anchors,4]
-    # cls_pred格式为[h*w*num)anchors,num_classes]
+    # cls_pred格式为[h*w*num_anchors,num_classes]
     return cls_pred, loc_pred
 
 

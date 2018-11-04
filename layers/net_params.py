@@ -20,7 +20,7 @@ def ssd300_config():
     SSDParams.feat_layers = ['block4', 'block7', 'block8', 'block9', 'block10', 'block11']
     SSDParams.feat_shapes = [(38, 38), (19, 19), (10, 10), (5, 5), (3, 3), (1, 1)]
     SSDParams.anchor_sizes = [(21., 45.), (45., 99.), (99., 153.), (153., 207.), (207., 261.), (261., 315.)]
-    anchor_steps = [8, 16, 32, 64, 100, 300],  # 特征图锚点框放大到原始图的缩放比例
+    SSDParams.anchor_steps = [8, 16, 32, 64, 100, 300] # 特征图锚点框放大到原始图的缩放比例
     SSDParams.aspect_ratios = [[2, .5],
                                [2, .5, 3, 1. / 3],
                                [2, .5, 3, 1. / 3],

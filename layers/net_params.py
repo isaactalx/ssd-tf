@@ -14,22 +14,49 @@ SSDParams = namedtuple('SSDParameters', ['img_shape',  # 输入图片尺寸
                                          ])
 
 
-def ssd300_config():
-    SSDParams.img_shape = (300, 300)
-    SSDParams.num_classes = 21
-    SSDParams.feat_layers = ['block4', 'block7', 'block8', 'block9', 'block10', 'block11']
-    SSDParams.feat_shapes = [(38, 38), (19, 19), (10, 10), (5, 5), (3, 3), (1, 1)]
-    SSDParams.anchor_sizes = [(21., 45.), (45., 99.), (99., 153.), (153., 207.), (207., 261.), (261., 315.)]
-    SSDParams.anchor_steps = [8, 16, 32, 64, 100, 300] # 特征图锚点框放大到原始图的缩放比例
-    SSDParams.aspect_ratios = [[2, .5],
-                               [2, .5, 3, 1. / 3],
-                               [2, .5, 3, 1. / 3],
-                               [2, .5, 3, 1. / 3],
-                               [2, .5],
-                               [2, .5]]
-    SSDParams.normalizations = [20, -1, -1, -1, -1, -1]
-    return SSDParams
-    pass
+# def ssd300_config():
+#     SSDParams.img_shape = (300, 300)
+#     SSDParams.num_classes = 21
+#     SSDParams.no_annotation_label = 21
+#     SSDParams.feat_layers = ['block4', 'block7', 'block8', 'block9', 'block10', 'block11']
+#     SSDParams.feat_shapes = [(38, 38), (19, 19), (10, 10), (5, 5), (3, 3), (1, 1)]
+#     SSDParams.anchor_sizes = [(21., 45.), (45., 99.), (99., 153.), (153., 207.), (207., 261.), (261., 315.)]
+#     SSDParams.anchor_steps = [8, 16, 32, 64, 100, 300]  # 特征图锚点框放大到原始图的缩放比例
+#     SSDParams.aspect_ratios = [[2, .5],
+#                                [2, .5, 3, 1. / 3],
+#                                [2, .5, 3, 1. / 3],
+#                                [2, .5, 3, 1. / 3],
+#                                [2, .5],
+#                                [2, .5]]
+#     SSDParams.normalizations = [20, -1, -1, -1, -1, -1]
+#     return SSDParams
 
 
-default_params = ssd300_config()
+def ssd_config():
+    default_params = SSDParams(
+        img_shape=(300, 300),
+        num_classes=21,
+        no_annotation_label=21,
+        feat_layers=['block4', 'block7', 'block8', 'block9', 'block10', 'block11'],
+        feat_shapes=[(38, 38), (19, 19), (10, 10), (5, 5), (3, 3), (1, 1)],
+        anchor_size_bounds=[0.15, 0.90],
+        anchor_sizes=[(21., 45.),
+                      (45., 99.),
+                      (99., 153.),
+                      (153., 207.),
+                      (207., 261.),
+                      (261., 315.)],
+        aspect_ratios=[[2, .5],
+                       [2, .5, 3, 1. / 3],
+                       [2, .5, 3, 1. / 3],
+                       [2, .5, 3, 1. / 3],
+                       [2, .5],
+                       [2, .5]],
+        anchor_steps=[8, 16, 32, 64, 100, 300],
+        normalizations=[1, -1, -1, -1, -1, -1],  # 控制SSD层处理时是否预先沿着HW正则化
+        prior_scaling=[0.1, 0.1, 0.2, 0.2]
+    )
+    return default_params
+
+
+default_params = ssd_config()

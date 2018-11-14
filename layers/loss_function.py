@@ -11,7 +11,7 @@ def ssd_losses(logits, localizations,  # 预测类别，位置
     with tf.name_scope(scope, 'ssd_losses'):
         logit = logits[0]
         num_classes = logit.shape[-1]
-        batch_size = logit.shape[0]
+        batch_size = logit.shape[0].value
 
         flogits = []
         fgclasses = []
@@ -22,7 +22,7 @@ def ssd_losses(logits, localizations,  # 预测类别，位置
             flogits.append(tf.reshape(logits[i], [-1, num_classes]))
             fgclasses.append(tf.reshape(gclasses[i], [-1]))
             fgscores.append(tf.reshape(gscores[i], [-1]))
-            fglocalizations.append(tf.reshape(localizations[i], [-1, 4]))
+            flocalizations.append(tf.reshape(localizations[i], [-1, 4]))
             fglocalizations.append(tf.reshape(glocalizations[i], [-1, 4]))
         logits = tf.concat(flogits, axis=0)  # 全部搜索框，对应21个类别的输出[8732*batch_size,21]
         gclasses = tf.concat(fgclasses, axis=0)  # 全部搜索框,真实类别的数字[8732*batch_size,]
@@ -81,8 +81,7 @@ def abs_smooth(x):
     smooth L1函数
     :return:1/2*x^2 if |x|<1 else |x|-1/2
     """
-    # 另一种实现
-    # minx = tf.minimum(absx, 1)
-    # return 0.5 * ((absx - 1) * minx + absx)
     absx = tf.abs(x)
-    return 0.5 * absx ^ 2 if absx < 1 else absx - 0.5
+    minx = tf.minimum(absx, 1)
+    r = 0.5 * ((absx - 1) * minx + absx)
+    return r

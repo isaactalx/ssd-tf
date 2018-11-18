@@ -57,11 +57,11 @@ def ssd_net(inputs,
         # Block 6: let's dilate the hell out of it!
         net = slim.conv2d(net, 1024, [3, 3], rate=6, scope='conv6', padding='SAME')
         end_points['block6'] = net
-        net = tf.layers.dropout(net, rate=dropout_keep_prob, training=is_training)
+        # net = tf.layers.dropout(net, rate=dropout_keep_prob, training=is_training)
         # Block 7: 1x1 conv. Because the fuck.
         net = slim.conv2d(net, 1024, [1, 1], scope='conv7', padding='SAME')
         end_points['block7'] = net
-        net = tf.layers.dropout(net, rate=dropout_keep_prob, training=is_training)
+        # net = tf.layers.dropout(net, rate=dropout_keep_prob, training=is_training)
 
         # Block 8/9/10/11: 1x1 and 3x3 convolutions stride 2 (except lasts).
         end_point = 'block8'

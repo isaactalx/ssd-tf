@@ -1,28 +1,9 @@
-# Copyright 2017 Paul Balanca. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-import random
 
-import cv2
+import random
 import matplotlib.cm as mpcm
 import matplotlib.pyplot as plt
 
 from datasets.voc07_config import VOC_CLASSES
-
-# =========================================================================== #
-# Some colormaps.
-# =========================================================================== #
 
 class_to_index = dict(zip(range(len(VOC_CLASSES)),VOC_CLASSES ))
 
@@ -47,47 +28,6 @@ colors_tableau = [(255, 255, 255), (31, 119, 180), (174, 199, 232), (255, 127, 1
                   (188, 189, 34), (219, 219, 141), (23, 190, 207), (158, 218, 229)]
 
 
-# =========================================================================== #
-# OpenCV drawing.
-# =========================================================================== #
-def draw_lines(img, lines, color=[255, 0, 0], thickness=2):
-    """Draw a collection of lines on an image.
-    """
-    for line in lines:
-        for x1, y1, x2, y2 in line:
-            cv2.line(img, (x1, y1), (x2, y2), color, thickness)
-
-
-def draw_rectangle(img, p1, p2, color=[255, 0, 0], thickness=2):
-    cv2.rectangle(img, p1[::-1], p2[::-1], color, thickness)
-
-
-def draw_bbox(img, bbox, shape, label, color=[255, 0, 0], thickness=2):
-    p1 = (int(bbox[0] * shape[0]), int(bbox[1] * shape[1]))
-    p2 = (int(bbox[2] * shape[0]), int(bbox[3] * shape[1]))
-    cv2.rectangle(img, p1[::-1], p2[::-1], color, thickness)
-    p1 = (p1[0] + 15, p1[1])
-    cv2.putText(img, str(label), p1[::-1], cv2.FONT_HERSHEY_DUPLEX, 0.5, color, 1)
-
-
-def bboxes_draw_on_img(img, classes, scores, bboxes, colors, thickness=2):
-    shape = img.shape
-    for i in range(bboxes.shape[0]):
-        bbox = bboxes[i]
-        color = colors[classes[i]]
-        # Draw bounding box...
-        p1 = (int(bbox[0] * shape[0]), int(bbox[1] * shape[1]))
-        p2 = (int(bbox[2] * shape[0]), int(bbox[3] * shape[1]))
-        cv2.rectangle(img, p1[::-1], p2[::-1], color, thickness)
-        # Draw text...
-        s = '%s/%.3f' % (classes[i], scores[i])
-        p1 = (p1[0] - 5, p1[1])
-        cv2.putText(img, s, p1[::-1], cv2.FONT_HERSHEY_DUPLEX, 0.4, color, 1)
-
-
-# =========================================================================== #
-# Matplotlib show...
-# =========================================================================== #
 def plt_bboxes(img, classes, scores, bboxes, figsize=(10, 10), linewidth=1.5):
     """Visualize bounding boxes. Largely inspired by SSD-MXNET!
     """
@@ -111,7 +51,6 @@ def plt_bboxes(img, classes, scores, bboxes, figsize=(10, 10), linewidth=1.5):
                                  edgecolor=colors[cls_id],
                                  linewidth=linewidth)
             plt.gca().add_patch(rect)
-            #class_idx = str(cls_id)
             class_name=class_to_index[cls_id]
 
             plt.gca().text(xmin, ymin - 2,

@@ -7,7 +7,7 @@ _G_MEAN = 116.78
 _B_MEAN = 103.94
 MIN_OBJECT_COVERED = 0.25
 CROP_RATIO_RANGE = (0.6, 1.67)
-BBOX_CROP_OVERLAP = 0.5  # Minimum overlap to keep a bbox after cropping.
+BBOX_CROP_OVERLAP = 0.5
 
 
 def preprocess_for_train(image, labels, bboxes,
@@ -18,31 +18,15 @@ def preprocess_for_train(image, labels, bboxes,
         # Convert to float scaled [0, 1].
         if image.dtype != tf.float32:
             image = tf.image.convert_image_dtype(image, dtype=tf.float32)
-        tf_summary_image(image, bboxes, 'image_with_bboxes')
 
-        # Distort image and bounding boxes.
-        # dst_image, labels, bboxes, distort_bbox = \
-        #     distorted_bounding_box_crop(image, labels, bboxes,
-        #                                 min_object_covered=MIN_OBJECT_COVERED,
-        #                                 aspect_ratio_range=CROP_RATIO_RANGE)
-        # Resize image to output size.
         dst_image = resize_image(image, out_shape,
                                  method=tf.image.ResizeMethod.BILINEAR,
                                  align_corners=False)
-        tf_summary_image(dst_image, bboxes, 'image_shape_distorted')
 
         # Rescale to VGG input scale.
         image = dst_image * 255.
         image = tf_image_whitened(image, [_R_MEAN, _G_MEAN, _B_MEAN])
         return image, labels, bboxes
-
-
-def tf_summary_image(image, bboxes, name='image'):
-    image = tf.expand_dims(image, 0)
-    bboxes = tf.expand_dims(bboxes, 0)
-    image_with_box = tf.image.draw_bounding_boxes(image, bboxes)
-    tf.summary.image(name, image_with_box)
-
 
 def resize_image(image, size,
                  method=tf.image.ResizeMethod.BILINEAR,
@@ -54,7 +38,6 @@ def resize_image(image, size,
                                        method, align_corners)
         image = tf.reshape(image, tf.stack([size[0], size[1], channels]))
         return image
-
 
 def _ImageDimensions(image):
     if image.get_shape().is_fully_defined():
@@ -98,12 +81,9 @@ def distorted_bounding_box_crop(image,
             use_image_if_no_bounding_boxes=True)
         distort_bbox = distort_bbox[0, 0]
 
-        # Crop the image to the specified bounding box.
         cropped_image = tf.slice(image, bbox_begin, bbox_size)
-        # Restore the shape since the dynamic slice loses 3rd dimension.
         cropped_image.set_shape([None, None, 3])
 
-        # Update bounding boxes: resize and filter out.
         bboxes = bboxes_resize(distort_bbox, bboxes)
         labels, bboxes = bboxes_filter_overlap(labels, bboxes,
                                                threshold=BBOX_CROP_OVERLAP,
@@ -138,10 +118,9 @@ def bboxes_filter_overlap(labels, bboxes,
 
 def bboxes_intersection(bbox_ref, bboxes, name=None):
     with tf.name_scope(name, 'bboxes_intersection'):
-        # Should be more efficient to first transpose.
+
         bboxes = tf.transpose(bboxes)
         bbox_ref = tf.transpose(bbox_ref)
-        # Intersection bbox and volume.
         int_ymin = tf.maximum(bboxes[0], bbox_ref[0])
         int_xmin = tf.maximum(bboxes[1], bbox_ref[1])
         int_ymax = tf.minimum(bboxes[2], bbox_ref[2])
